@@ -20,8 +20,8 @@ func main() {
 	r.POST("/usuario", controladores.CadastrarUsuario)
 	r.GET("/usuario", controladores.BuscarUsuarios)
 	r.GET("/usuario/:id", controladores.BuscarUsuario)
-	//r.PUT("/usuario/:id", controladores.AtualizarUsuario)
-	r.DELETE("/deletarUsuario/:id", controladores.DeletarUsuario)
+	r.PUT("/usuario/:id", controladores.AtualizarUsuario)
+	r.DELETE("/usuario/:id", controladores.DeletarUsuario)
 
 	r.Run()
 }

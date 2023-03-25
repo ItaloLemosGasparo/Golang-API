@@ -71,7 +71,7 @@ func BuscarUsuario(c *gin.Context) {
 func AtualizarUsuario(c *gin.Context) {
 	id := c.Param("id")
 
-	var usuarioTempAtt struct {
+	var usuarioTemp struct {
 		Nome       string
 		Telefone   string
 		TelefoneB  string
@@ -80,12 +80,12 @@ func AtualizarUsuario(c *gin.Context) {
 		Privilegio string
 	}
 
-	c.Bind(&usuarioTempAtt)
+	c.Bind(&usuarioTemp)
 
-	var usuarioTemp modelos.Usuario
-	inicializadores.BD.First(&usuarioTemp, id)
+	var usuario modelos.Usuario
+	inicializadores.BD.First(&usuario, id)
 
-	inicializadores.BD.Model(&usuarioTemp).Updates(modelos.Usuario{
+	inicializadores.BD.Model(&usuario).Updates(modelos.Usuario{
 		Nome:       usuarioTemp.Nome,
 		Telefone:   usuarioTemp.Telefone,
 		TelefoneB:  usuarioTemp.TelefoneB,
@@ -95,6 +95,6 @@ func AtualizarUsuario(c *gin.Context) {
 	})
 
 	c.JSON(200, gin.H{
-		"post": usuarioTemp,
+		"usuario": usuario,
 	})
 }
