@@ -2,7 +2,7 @@ package controladores
 
 import (
 	"projeto/inicializadores"
-	"projeto_def/modelos"
+	"projeto/modelos"
 
 	"github.com/gin-gonic/gin"
 )
