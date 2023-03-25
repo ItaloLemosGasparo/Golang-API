@@ -25,7 +25,6 @@ type Endereco struct {
 type Senhas struct {
 	Id_Usuario int
 	SenhaA     string
-	SenhaB     string
 }
 
 type Fornecedor struct {

@@ -12,4 +12,5 @@ func init() {
 
 func main() {
 	inicializadores.BD.AutoMigrate(&modelos.Usuario{})
+	inicializadores.BD.AutoMigrate(&modelos.Senhas{})
 }

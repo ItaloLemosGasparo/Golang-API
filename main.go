@@ -21,6 +21,7 @@ func main() {
 	r.GET("/usuario", controladores.BuscarUsuarios)
 	r.GET("/usuario/:id", controladores.BuscarUsuario)
 	r.PUT("/usuario/:id", controladores.AtualizarUsuario)
+	r.PUT("/atualizarsenha/:id", controladores.AtualizarSenhaUsuario)
 	r.DELETE("/usuario/:id", controladores.DeletarUsuario)
 
 	r.Run()
