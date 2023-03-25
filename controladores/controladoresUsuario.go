@@ -79,4 +79,8 @@ func AtualizarUsuario(c *gin.Context) {
 		Privilegio: usuarioTemp.Privilegio,
 	})
 
+	c.JSON(200, gin.H{
+		"post": usuarioTemp,
+	})
+
 }
