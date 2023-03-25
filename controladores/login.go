@@ -5,41 +5,57 @@ import (
 	"projeto/modelos"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Função para criar um token JWT
+func criarToken(usuario modelos.Usuario) (string, error) {
+	// Definir o tempo de expiração do token
+	expiraEm := time.Now().Add(time.Hour * 24).Unix()
+
+	// Definir o payload do token
+	claims := jwt.MapClaims{
+		"id":    usuario.ID,
+		"email": usuario.Email,
+		"exp":   expiraEm,
+	}
+
+	// Gerar o token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte("secret"))
+}
+
 func Login(c *gin.Context) {
-	var login struct {
+	var usuarioTemp struct {
 		Email string
 		Senha string
 	}
 
-	c.Bind(&login)
+	c.Bind(&usuarioTemp)
 
 	var usuario modelos.Usuario
-	if result := inicializadores.BD.Where("email = ?", login.Email).First(&usuario); result.Error != nil {
-		c.Status(400)
-		return
-	}
+	inicializadores.BD.Where("email = ?", usuarioTemp.Email).First(&usuario)
 
-	if err := bcrypt.CompareHashAndPassword([]byte(usuario.Senha), []byte(login.Senha)); err != nil {
-		c.Status(400)
-		return
-	}
+	//PEgar o id do usuario e dar um find tanto em usuario quanto em senha vaseado no id -----------------------------------------
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  usuario.ID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
-	})
+	err := bcrypt.CompareHashAndPassword([]byte(usuario.Senha), []byte(usuarioTemp.Senha))
 
-	tokenString, err := token.SignedString([]byte("sua_chave_secreta_aqui"))
 	if err != nil {
-		c.Status(400)
+		c.Status(401)
 		return
 	}
 
+	// Criar token JWT
+	token, err := criarToken(usuario)
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	// Responder com o token JWT
 	c.JSON(200, gin.H{
-		"token": tokenString,
+		"token": token,
 	})
 }
