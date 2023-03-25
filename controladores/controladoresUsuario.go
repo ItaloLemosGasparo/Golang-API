@@ -8,8 +8,6 @@ import (
 )
 
 func CadastrarUsuario(c *gin.Context) {
-	//Receber dados
-
 	var usuarioTemp struct {
 		Nome       string
 		Telefone   string
@@ -21,9 +19,8 @@ func CadastrarUsuario(c *gin.Context) {
 
 	c.Bind(&usuarioTemp)
 
-	//Criar o post
-
-	usuario := modelos.Usuario{Nome: usuarioTemp.Nome,
+	usuario := modelos.Usuario{
+		Nome:       usuarioTemp.Nome,
 		Telefone:   usuarioTemp.Telefone,
 		TelefoneB:  usuarioTemp.TelefoneB,
 		Email:      usuarioTemp.Email,
@@ -38,10 +35,8 @@ func CadastrarUsuario(c *gin.Context) {
 		return
 	}
 
-	//retornar func
-
 	c.JSON(200, gin.H{
-		"post": usuario,
+		"usuarioz": usuario,
 	})
 }
 
@@ -51,4 +46,24 @@ func DeletarUsuario(c *gin.Context) {
 	inicializadores.BD.Delete(&modelos.Usuario{}, id)
 
 	c.Status(200)
+}
+
+func BuscarUsuarios(c *gin.Context) {
+	var usuarios []modelos.Usuario
+	inicializadores.BD.Find(&usuarios)
+
+	c.JSON(200, gin.H{
+		"usuarios": usuarios,
+	})
+}
+
+func BuscarUsuario(c *gin.Context) {
+	id := c.Param("id")
+
+	var usuario modelos.Usuario
+	inicializadores.BD.First(&usuario, id)
+
+	c.JSON(200, gin.H{
+		"usuario": usuario,
+	})
 }
