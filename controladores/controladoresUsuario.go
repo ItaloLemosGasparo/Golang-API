@@ -1,12 +1,13 @@
 package controladores
 
 import (
+	"projeto/inicializadores"
 	"projeto_def/modelos"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CriarCadastroUsuario(c *gin.Context) {
+func CadastrarUsuario(c *gin.Context) {
 	//Receber dados
 
 	var usuarioTemp struct {
@@ -42,5 +43,12 @@ func CriarCadastroUsuario(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"post": usuario,
 	})
+}
 
+func DeletarUsuario(c *gin.Context) {
+	id := c.Param("id")
+
+	inicializadores.BD.Delete(&modelos.Usuario{}, id)
+
+	c.Status(200)
 }
