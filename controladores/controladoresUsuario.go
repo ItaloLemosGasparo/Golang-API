@@ -98,3 +98,31 @@ func AtualizarUsuario(c *gin.Context) {
 		"usuario": usuario,
 	})
 }
+
+func CadastrarSenhaUsuario(c *gin.Context) {
+	id := c.Param("id")
+
+	var senhaTemp struct {
+		Id_Usuario int
+		SenhaA     string
+		SenhaB     string
+	}
+
+	c.Bind(&senhaTemp)
+
+	senha := modelos.Senhas{
+		Id_Usuario: senhaTemp.Id_Usuario,
+		SenhaA:     senhaTemp.SenhaA,
+		SenhaB:     senhaTemp.SenhaB,
+	}
+
+	result := inicializadores.BD.Create(&senha)
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+	c.JSON(200, gin.H{
+		"Senha": senha,
+	})
+}
