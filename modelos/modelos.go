@@ -64,3 +64,8 @@ type Pedido struct {
 	Id_Usuario  int
 	Situacao    string
 }
+
+type Favoritos struct {
+	Id_Usuario int
+	Id_Produto int
+}
