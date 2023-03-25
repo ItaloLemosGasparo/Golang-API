@@ -13,11 +13,11 @@ func init() {
 func main() {
 	r := gin.Default()
 
-	//r.POST("/posts", controladores.CriarPost)
-	//r.GET("/posts", controladores.BuscarPosts)
-	//r.GET("/posts/:id", controladores.BuscarPost)
-	//r.PUT("/posts/:id", controladores.AtualizarPost)
-	//r.DELETE("/posts/:id", controladores.DeletarPost)
+	//r.POST("/usuario", controladores.CriarPost)
+	//r.GET("/usuario", controladores.BuscarPosts)
+	//r.GET("/usuario/:id", controladores.BuscarPost)
+	//r.PUT("/usuario/:id", controladores.AtualizarPost)
+	//r.DELETE("/usuario/:id", controladores.DeletarPost)
 
 	r.Run()
 }
