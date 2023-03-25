@@ -1,4 +1,4 @@
-module projeto_def
+module projeto
 
 go 1.20
 

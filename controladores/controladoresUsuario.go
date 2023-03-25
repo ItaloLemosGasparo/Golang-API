@@ -1,8 +1,8 @@
 package controladores
 
 import (
-	"projeto_def/inicializadores"
-	"projeto_def/modelos"
+	"projeto/inicializadores"
+	"projeto/modelos"
 
 	"github.com/gin-gonic/gin"
 )
