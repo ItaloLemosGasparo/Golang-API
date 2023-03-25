@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	fmt.Print("Funcionou meu chapa")
+	fmt.Println("Funcionou meu chapa")
 }
 
 func main() {
