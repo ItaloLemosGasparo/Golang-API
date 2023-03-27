@@ -35,12 +35,16 @@ func Login(c *gin.Context) {
 
 	c.Bind(&usuarioTemp)
 
+	//Buscando o usuario
 	var usuario modelos.Usuario
 	inicializadores.BD.Where("email = ?", usuarioTemp.Email).First(&usuario)
 
-	//PEgar o id do usuario e dar um find tanto em usuario quanto em senha vaseado no id -----------------------------------------
+	//Buscando a senha do usuario
+	var senha modelos.Senhas
+	inicializadores.BD.Where("id_Usuario = ?", usuario.ID).First(&senha)
 
-	err := bcrypt.CompareHashAndPassword([]byte(usuario.Senha), []byte(usuarioTemp.Senha))
+	//Pegar o id do usuario e dar um find tanto em usuario quanto em senha vaseado no id -----------------------------------------
+	err := bcrypt.CompareHashAndPassword([]byte(senha.SenhaA), []byte(usuarioTemp.Senha))
 
 	if err != nil {
 		c.Status(401)

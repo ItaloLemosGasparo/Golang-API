@@ -23,6 +23,7 @@ func main() {
 	r.PUT("/usuario/:id", controladores.AtualizarUsuario)
 	r.PUT("/atualizarsenha/:id", controladores.AtualizarSenhaUsuario)
 	r.DELETE("/usuario/:id", controladores.DeletarUsuario)
+	r.POST("/usuario/login", controladores.Login)
 
 	r.Run()
 }
