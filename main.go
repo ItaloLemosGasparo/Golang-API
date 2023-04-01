@@ -13,7 +13,16 @@ func init() {
 	fmt.Println("Funcionando")
 	inicializadores.CarregarVariaveisDeAmbiente()
 	inicializadores.ConectarAoBD()
+
+	inicializadores.BD.AutoMigrate(&modelos.Usuario{})
+	inicializadores.BD.AutoMigrate(&modelos.Senhas{})
 	inicializadores.BD.AutoMigrate(&modelos.Endereco{})
+	inicializadores.BD.AutoMigrate(&modelos.Fornecedor{})
+	inicializadores.BD.AutoMigrate(&modelos.Produto{})
+	inicializadores.BD.AutoMigrate(&modelos.Carrinho{})
+	inicializadores.BD.AutoMigrate(&modelos.Items_Carrinho{})
+	inicializadores.BD.AutoMigrate(&modelos.Pedido{})
+	inicializadores.BD.AutoMigrate(&modelos.Favoritos{})
 }
 
 func main() {
@@ -29,8 +38,8 @@ func main() {
 	r.POST("/endereco", controladores.CadastrarEndereco)
 
 	r.POST("/fornecedor", controladores.CadastrarFornecedor)
-	r.GET("/fornecedor", controladores.BuscarUsuarios)
-	r.GET("/fornecedor/:id", controladores.BuscarUsuarios)
+	r.GET("/fornecedor", controladores.BuscarFornecedores)
+	r.GET("/fornecedor/:id", controladores.BuscarFornecedor)
 
 	r.Run()
 }
