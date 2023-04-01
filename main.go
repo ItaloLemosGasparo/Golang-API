@@ -34,7 +34,7 @@ func main() {
 	r.PUT("/usuario/:id", controladores.AtualizarUsuario)
 	r.PUT("/atualizarsenha/:id", controladores.AtualizarSenhaUsuario)
 	r.DELETE("/usuario/:id", controladores.DeletarUsuario)
-	r.PUT("/cadastrarTelefone", controladores.CadastrarTelefone)
+	r.PUT("/cadastrarTelefone/:id", controladores.AtualizarTelefone)
 	r.POST("/cadastrarEndereco", controladores.CadastrarEndereco)
 
 	r.POST("/usuario/login", controladores.Login)

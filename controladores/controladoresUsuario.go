@@ -197,7 +197,7 @@ func CadastrarEndereco(c *gin.Context) {
 	})
 }
 
-func CadastrarTelefone(c *gin.Context) {
+func AtualizarTelefone(c *gin.Context) {
 	id := c.Param("id")
 
 	var telefoneTemp struct {
