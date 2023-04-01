@@ -5,9 +5,9 @@ import "gorm.io/gorm"
 type Usuario struct {
 	gorm.Model
 	Nome       string `json:"nome" gorm:"not null;type:varchar(50)"`
-	Telefone   string `json:"telefone" gorm:"type:varchar(11)"`
-	TelefoneB  string `json:"telefone_b" gorm:"type:varchar(11)"`
-	Email      string `json:"email" gorm:"not null;uniqueIndex;type:varchar(255)"`
+	Telefone   string `json:"telefone" gorm:"type:varchar(14)"`
+	TelefoneB  string `json:"telefone_b" gorm:"type:varchar(14)"`
+	Email      string `json:"email" gorm:"not null;uniqueIndex;type:varchar(128)"`
 	CPF        string `json:"cpf" gorm:"uniqueIndex;type:varchar(14)"`
 	Privilegio string `json:"privilegio"`
 }
@@ -23,7 +23,7 @@ type Endereco struct {
 
 type Senhas struct {
 	Id_Usuario int    `json:"id_usuario" gorm:"primaryKey;not null;foreignKey:id"`
-	SenhaA     string `json:"SenhaA" gorm:"not null;type:varchar(9)"`
+	SenhaA     string `json:"SenhaA" gorm:"not null;type:varchar(32)"`
 }
 
 type Fornecedor struct {
@@ -32,8 +32,8 @@ type Fornecedor struct {
 	Email     string `json:"email" gorm:"not null;uniqueIndex;type:varchar(255)"`
 	Telefone  string `json:"telefone" gorm:"type:varchar(11)"`
 	TelefoneB string `json:"telefone_b" gorm:"type:varchar(11)"`
-	CPF       string
-	CNPJ      string
+	CPF       string `json:"cpf" gorm:"uniqueIndex;type:varchar(14)"`
+	CNPJ      string `json:"cnpj" gorm:"uniqueIndex;type:varchar(18)"`
 }
 
 type Produto struct {
