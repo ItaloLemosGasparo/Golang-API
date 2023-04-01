@@ -119,27 +119,27 @@ func AtualizarUsuario(c *gin.Context) {
 func AtualizarSenhaUsuario(c *gin.Context) {
 	id := c.Param("id")
 
-	var senhaTemp struct {
-		Senha string
-	}
-
-	c.Bind(&senhaTemp)
-
-	var usuario modelos.Usuario
-	if result := inicializadores.BD.First(&usuario, id); result.Error != nil {
+	//Verifica se o usuario existe
+	if result := inicializadores.BD.First("usuarios", id); result.Error != nil {
 		c.Status(400)
 		return
 	}
 
+	//Verifica se o usuario tem uma senha cadastrada
 	var senha modelos.Senhas
 	if result := inicializadores.BD.Where("Id_Usuario = ?", id).First(&senha); result.Error != nil {
 		c.Status(400)
 		return
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(senha.SenhaA), []byte(senhaTemp.Senha))
+	var senhaTemp struct {
+		Senha string
+	}
 
-	if err != nil {
+	c.Bind(&senhaTemp)
+
+	//Verifica se a nova senha é igual a atual
+	if bcrypt.CompareHashAndPassword([]byte(senha.SenhaA), []byte(senhaTemp.Senha)) != nil {
 		senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(senhaTemp.Senha), bcrypt.DefaultCost)
 		if err != nil {
 			c.Status(400)
@@ -198,5 +198,29 @@ func CadastrarEndereco(c *gin.Context) {
 }
 
 func CadastrarTelefone(c *gin.Context) {
+	id := c.Param("id")
 
+	var telefoneTemp struct {
+		Telefone  string
+		TelefoneB string
+	}
+
+	c.Bind(&telefoneTemp)
+
+	if telefoneTemp.Telefone != telefoneTemp.TelefoneB {
+		var usuario modelos.Usuario
+		inicializadores.BD.First(&usuario, id)
+
+		inicializadores.BD.Model(&usuario).Updates(modelos.Usuario{
+			Telefone:  telefoneTemp.Telefone,
+			TelefoneB: telefoneTemp.TelefoneB,
+		})
+
+		c.JSON(200, gin.H{
+			"usuario": usuario,
+		})
+	} else {
+		c.Status(400)
+		return
+	}
 }

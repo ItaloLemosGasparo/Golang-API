@@ -29,13 +29,15 @@ func main() {
 	r := gin.Default()
 
 	r.POST("/usuario", controladores.CadastrarUsuario)
-	r.GET("/usuario", controladores.BuscarUsuarios)
 	r.GET("/usuario/:id", controladores.BuscarUsuario)
+	r.GET("/usuario", controladores.BuscarUsuarios)
 	r.PUT("/usuario/:id", controladores.AtualizarUsuario)
 	r.PUT("/atualizarsenha/:id", controladores.AtualizarSenhaUsuario)
 	r.DELETE("/usuario/:id", controladores.DeletarUsuario)
+	r.PUT("/cadastrarTelefone", controladores.CadastrarTelefone)
+	r.POST("/cadastrarEndereco", controladores.CadastrarEndereco)
+
 	r.POST("/usuario/login", controladores.Login)
-	r.POST("/endereco", controladores.CadastrarEndereco)
 
 	r.POST("/fornecedor", controladores.CadastrarFornecedor)
 	r.GET("/fornecedor", controladores.BuscarFornecedores)
