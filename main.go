@@ -38,8 +38,8 @@ func main() {
 	r.POST("/endereco", controladores.CadastrarEndereco)
 
 	r.POST("/fornecedor", controladores.CadastrarFornecedor)
-	r.GET("/fornecedor", controladores.BuscarUsuarios)
-	r.GET("/fornecedor/:id", controladores.BuscarUsuarios)
+	r.GET("/fornecedor", controladores.BuscarFornecedores)
+	r.GET("/fornecedor/:id", controladores.BuscarFornecedor)
 
 	r.Run()
 }
