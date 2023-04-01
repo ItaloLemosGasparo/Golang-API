@@ -117,31 +117,26 @@ func AtualizarUsuario(c *gin.Context) {
 }
 
 func AtualizarSenhaUsuario(c *gin.Context) {
-	// Ler o id do usuário da rota
 	id := c.Param("id")
 
 	var senhaTemp struct {
 		Senha string
 	}
 
-	// Ler a nova senha do corpo da requisição
 	c.Bind(&senhaTemp)
 
-	// Criptografar a nova senha
 	senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(senhaTemp.Senha), bcrypt.DefaultCost)
 	if err != nil {
 		c.Status(400)
 		return
 	}
 
-	// Buscar o usuário no banco de dados pelo id
 	var usuario modelos.Usuario
 	if result := inicializadores.BD.First(&usuario, id); result.Error != nil {
 		c.Status(400)
 		return
 	}
 
-	// Atualizar a senha do usuário no banco de dados
 	var senha modelos.Senhas
 	if result := inicializadores.BD.Where("usuario_id = ?", id).First(&senha); result.Error != nil {
 		c.Status(400)
@@ -153,8 +148,42 @@ func AtualizarSenhaUsuario(c *gin.Context) {
 		return
 	}
 
-	// Responder com a nova senha criptografada
 	c.JSON(200, gin.H{
 		"Nova_senha": senha.SenhaA,
+	})
+}
+
+func CadastrarEndereco(c *gin.Context) {
+	var enderecoTemp struct {
+		Id_usuario int
+		Logradouro string
+		Numero     int
+		Bairro     string
+		Cidade     string
+		Uf         string
+		Cep        string
+	}
+
+	c.Bind(&enderecoTemp)
+
+	endereco := modelos.Endereco{
+		Id_Usuario: enderecoTemp.Id_usuario,
+		Logradouro: enderecoTemp.Logradouro,
+		Numero:     enderecoTemp.Numero,
+		Bairro:     enderecoTemp.Bairro,
+		Cidade:     enderecoTemp.Cidade,
+		Uf:         enderecoTemp.Uf,
+		Cep:        enderecoTemp.Cep,
+	}
+
+	result := inicializadores.BD.Create(&endereco)
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"endereco": endereco,
 	})
 }

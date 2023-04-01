@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"projeto/controladores"
 	"projeto/inicializadores"
+	"projeto/modelos"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +13,7 @@ func init() {
 	fmt.Println("Funcionando")
 	inicializadores.CarregarVariaveisDeAmbiente()
 	inicializadores.ConectarAoBD()
+	inicializadores.BD.AutoMigrate(&modelos.Endereco{})
 }
 
 func main() {
@@ -24,6 +26,7 @@ func main() {
 	r.PUT("/atualizarsenha/:id", controladores.AtualizarSenhaUsuario)
 	r.DELETE("/usuario/:id", controladores.DeletarUsuario)
 	r.POST("/usuario/login", controladores.Login)
+	r.POST("/endereco", controladores.CadastrarEndereco)
 
 	r.Run()
 }
