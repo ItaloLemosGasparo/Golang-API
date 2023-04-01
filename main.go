@@ -28,5 +28,9 @@ func main() {
 	r.POST("/usuario/login", controladores.Login)
 	r.POST("/endereco", controladores.CadastrarEndereco)
 
+	r.POST("/fornecedor", controladores.CadastrarFornecedor)
+	r.GET("/fornecedor", controladores.BuscarUsuarios)
+	r.GET("/fornecedor/:id", controladores.BuscarUsuarios)
+
 	r.Run()
 }
