@@ -125,12 +125,6 @@ func AtualizarSenhaUsuario(c *gin.Context) {
 
 	c.Bind(&senhaTemp)
 
-	senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(senhaTemp.Senha), bcrypt.DefaultCost)
-	if err != nil {
-		c.Status(400)
-		return
-	}
-
 	var usuario modelos.Usuario
 	if result := inicializadores.BD.First(&usuario, id); result.Error != nil {
 		c.Status(400)
@@ -138,19 +132,34 @@ func AtualizarSenhaUsuario(c *gin.Context) {
 	}
 
 	var senha modelos.Senhas
-	if result := inicializadores.BD.Where("usuario_id = ?", id).First(&senha); result.Error != nil {
-		c.Status(400)
-		return
-	}
-	senha.SenhaA = string(senhaCriptografada)
-	if result := inicializadores.BD.Save(&senha); result.Error != nil {
+	if result := inicializadores.BD.Where("Id_Usuario = ?", id).First(&senha); result.Error != nil {
 		c.Status(400)
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"Nova_senha": senha.SenhaA,
-	})
+	err := bcrypt.CompareHashAndPassword([]byte(senha.SenhaA), []byte(senhaTemp.Senha))
+
+	if err != nil {
+		senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(senhaTemp.Senha), bcrypt.DefaultCost)
+		if err != nil {
+			c.Status(400)
+			return
+		}
+
+		senha.SenhaA = string(senhaCriptografada)
+		if result := inicializadores.BD.Save(&senha); result.Error != nil {
+			c.Status(400)
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"senhaA": senha.SenhaA,
+		})
+	} else {
+		c.Status(400)
+		return
+	}
+
 }
 
 func CadastrarEndereco(c *gin.Context) {
@@ -186,4 +195,8 @@ func CadastrarEndereco(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"endereco": endereco,
 	})
+}
+
+func CadastrarTelefone(c *gin.Context) {
+
 }

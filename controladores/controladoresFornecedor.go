@@ -55,7 +55,7 @@ func BuscarFornecedores(c *gin.Context) {
 	})
 }
 
-func BuscarFornecedore(c *gin.Context) {
+func BuscarFornecedor(c *gin.Context) {
 	id := c.Param("id")
 
 	var fornecedor modelos.Fornecedor
