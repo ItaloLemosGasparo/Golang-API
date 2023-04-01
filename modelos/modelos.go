@@ -32,8 +32,8 @@ type Fornecedor struct {
 	Email     string `json:"email" gorm:"not null;uniqueIndex;type:varchar(255)"`
 	Telefone  string `json:"telefone" gorm:"type:varchar(11)"`
 	TelefoneB string `json:"telefone_b" gorm:"type:varchar(11)"`
-	CPF       string `json:"cpf" gorm:"uniqueIndex;type:varchar(14)"`
-	CNPJ      string `json:"cnpj" gorm:"uniqueIndex;type:varchar(18)"`
+	CPF       string
+	CNPJ      string
 }
 
 type Produto struct {

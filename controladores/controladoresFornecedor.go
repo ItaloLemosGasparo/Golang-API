@@ -24,8 +24,8 @@ func CadastrarFornecedor(c *gin.Context) {
 		Email:     fornecedorTemp.Email,
 		Telefone:  fornecedorTemp.Telefone,
 		TelefoneB: fornecedorTemp.TelefoneB,
-		Cpf:       fornecedorTemp.Cpf,
-		Cnpj:      fornecedorTemp.Cnpj,
+		CPF:       fornecedorTemp.Cpf,
+		CNPJ:      fornecedorTemp.Cnpj,
 	}
 
 	if result := inicializadores.BD.Create(&fornecedor); result.Error != nil {
@@ -87,8 +87,8 @@ func AtualizarFornecedor(c *gin.Context) {
 		Email:     fornecedorTemp.Email,
 		Telefone:  fornecedorTemp.Telefone,
 		TelefoneB: fornecedorTemp.TelefoneB,
-		Cpf:       fornecedorTemp.Cpf,
-		Cnpj:      fornecedorTemp.Cnpj,
+		CPF:       fornecedorTemp.Cpf,
+		CNPJ:      fornecedorTemp.Cnpj,
 	})
 
 	c.JSON(200, gin.H{
