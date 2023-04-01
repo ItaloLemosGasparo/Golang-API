@@ -29,11 +29,11 @@ type Senhas struct {
 type Fornecedor struct {
 	gorm.Model
 	Nome      string `json:"nome" gorm:"not null;type:varchar(50)"`
-	Email     string `json:"email" gorm:"not null;uniqueIndex;type:varchar(128)"`
-	Telefone  string `json:"telefone" gorm:"type:varchar(14)"`
-	TelefoneB string `json:"telefone_b" gorm:"type:varchar(14)"`
-	CPF       string
-	CNPJ      string
+	Email     string `json:"email" gorm:"not null;uniqueIndex;type:varchar(255)"`
+	Telefone  string `json:"telefone" gorm:"type:varchar(11)"`
+	TelefoneB string `json:"telefone_b" gorm:"type:varchar(11)"`
+	CPF       string `json:"cpf" gorm:"uniqueIndex;type:varchar(14)"`
+	CNPJ      string `json:"cnpj" gorm:"uniqueIndex;type:varchar(18)"`
 }
 
 type Produto struct {
