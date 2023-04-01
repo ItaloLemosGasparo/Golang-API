@@ -25,5 +25,9 @@ func main() {
 	r.DELETE("/usuario/:id", controladores.DeletarUsuario)
 	r.POST("/usuario/login", controladores.Login)
 
+	r.POST("/fornecedor", controladores.CadastrarFornecedor)
+	r.GET("/fornecedor", controladores.BuscarUsuarios)
+	r.GET("/fornecedor/:id", controladores.BuscarUsuarios)
+
 	r.Run()
 }
