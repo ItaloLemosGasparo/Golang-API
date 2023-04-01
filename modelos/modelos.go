@@ -23,13 +23,13 @@ type Endereco struct {
 
 type Senhas struct {
 	Id_Usuario int    `json:"id_usuario" gorm:"primaryKey;not null;foreignKey:id"`
-	SenhaA     string `json:"SenhaA" gorm:"not null;type:varchar(32)"`
+	SenhaA     string `json:"SenhaA" gorm:"not null;type:varchar(256)"`
 }
 
 type Fornecedor struct {
 	gorm.Model
 	Nome      string `json:"nome" gorm:"not null;type:varchar(50)"`
-	Email     string `json:"email" gorm:"not null;uniqueIndex;type:varchar(255)"`
+	Email     string `json:"email" gorm:"not null;uniqueIndex;type:varchar(128)"`
 	Telefone  string `json:"telefone" gorm:"type:varchar(11)"`
 	TelefoneB string `json:"telefone_b" gorm:"type:varchar(11)"`
 	CPF       string `json:"cpf" gorm:"uniqueIndex;type:varchar(14)"`
