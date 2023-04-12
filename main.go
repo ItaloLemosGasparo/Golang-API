@@ -28,6 +28,7 @@ func init() {
 func main() {
 	r := gin.Default()
 
+	//Usuarios
 	r.POST("/usuario", controladores.CadastrarUsuario)
 	r.GET("/usuario/:id", controladores.BuscarUsuario)
 	r.GET("/usuario", controladores.BuscarUsuarios)
@@ -37,8 +38,10 @@ func main() {
 	r.PUT("/cadastrarTelefone/:id", controladores.AtualizarTelefone)
 	r.POST("/cadastrarEndereco", controladores.CadastrarEndereco)
 
+	//Login
 	r.POST("/usuario/login", controladores.Login)
 
+	//Fornecedores
 	r.POST("/fornecedor", controladores.CadastrarFornecedor)
 	r.GET("/fornecedor", controladores.BuscarFornecedores)
 	r.GET("/fornecedor/:id", controladores.BuscarFornecedor)

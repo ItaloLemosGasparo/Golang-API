@@ -206,6 +206,8 @@ func AtualizarTelefone(c *gin.Context) {
 	}
 
 	c.Bind(&telefoneTemp)
+	
+	telefone := inicializadores.BD.First(&usuario, id)
 
 	if telefoneTemp.Telefone != telefoneTemp.TelefoneB {
 		var usuario modelos.Usuario

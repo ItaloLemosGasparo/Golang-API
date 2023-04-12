@@ -39,7 +39,7 @@ type Fornecedor struct {
 
 type Produto struct {
 	gorm.Model
-	Id_Fornecedor uint    `json:"id_Fornecedor" gorm:"not null;index;foreignKey:id"`
+	Id_Fornecedor int    `json:"id_Fornecedor" gorm:"not null;index;foreignKey:id"`
 	Nome          string  `json:"nome" gorm:"not null;type:varchar(50)"`
 	Descricao     string  `json:"descricao" gorm:"not null;type:varchar(2048)"`
 	Preco         float64 `json:"preco" gorm:"not null"`
