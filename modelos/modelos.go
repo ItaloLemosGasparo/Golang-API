@@ -16,6 +16,7 @@ type Senhas struct {
 	Id_Usuario int    `json:"id_usuario" gorm:"primaryKey;not null;foreignKey:id"`
 	SenhaA     string `json:"SenhaA" gorm:"not null;type:varchar(256)"`
 }
+
 type Endereco struct {
 	Id_Usuario int    `json:"id_usuario" gorm:"primaryKey;not null;foreignKey:id"`
 	Logradouro string `json:"logradouro" gorm:"not null;type:varchar(100)"`
