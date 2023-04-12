@@ -3,12 +3,13 @@ package controladores
 import (
 	"projeto/inicializadores"
 	"projeto/modelos"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CadastrarProduto(c *gin.Context)  {
-	var ProdutoTemp struct{
+func CadastrarProduto(c *gin.Context) {
+	var ProdutoTemp struct {
 		Id_Fornecedor int
 		Nome          string
 		Descricao     string
@@ -19,9 +20,9 @@ func CadastrarProduto(c *gin.Context)  {
 
 	Produto := modelos.Produto{
 		Id_Fornecedor: ProdutoTemp.Id_Fornecedor,
-		Nome: ProdutoTemp.Nome,
-		Descricao: ProdutoTemp.Descricao,
-		Preco: ProdutoTemp.Preco,
+		Nome:          ProdutoTemp.Nome,
+		Descricao:     ProdutoTemp.Descricao,
+		Preco:         ProdutoTemp.Preco,
 	}
 
 	if result := inicializadores.BD.Create(&Produto); result.Error != nil {
@@ -32,4 +33,36 @@ func CadastrarProduto(c *gin.Context)  {
 	c.JSON(200, gin.H{
 		"produto": Produto,
 	})
+}
+
+func CadastrarFavorito(c *gin.Context) {
+	idU := c.Param("idU")
+	idP := c.Param("idP")
+
+	var usuario modelos.Usuario
+	inicializadores.BD.First(&usuario, idU)
+
+	var favorito modelos.Favoritos
+
+	if inicializadores.BD.First(&favorito.Id_Produto, idP) == nil {
+		idUs, err := strconv.Atoi(idU)
+		idPr, err2 := strconv.Atoi(idP)
+
+		if err != nil && err2 != nil {
+			favorito = modelos.Favoritos{
+				Id_Usuario: idUs,
+				Id_Produto: idPr,
+			}
+			if result := inicializadores.BD.Create(&favorito); result.Error != nil {
+				c.Status(400)
+				return
+			}
+		} else {
+			c.Status(400)
+			return
+		}
+	} else {
+		c.Status(400)
+		return
+	}
 }

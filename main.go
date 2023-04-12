@@ -46,5 +46,9 @@ func main() {
 	r.GET("/fornecedor", controladores.BuscarFornecedores)
 	r.GET("/fornecedor/:id", controladores.BuscarFornecedor)
 
+	//Prudotos
+	r.POST("/produto", controladores.CadastrarProduto)
+	r.POST("/produto/:idU/:idP", controladores.CadastrarFavorito) //idUsuario /: idProduto
+
 	r.Run()
 }
