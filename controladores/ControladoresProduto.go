@@ -66,3 +66,29 @@ func CadastrarFavorito(c *gin.Context) {
 		return
 	}
 }
+
+func AddCarrinho(c *gin.Context) {
+	//map para armazenar os itens do carrinho.
+	var carrinho = make(map[int]int)
+	var item Item
+	if err := c.BindJSON(&item); err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"error": "Bad request"})
+		return
+	}
+
+	// Verifica se o produto já está add no BD
+	var produto modelos.Produto
+	if err := inicializadores.BD.First(&produto, item.Id_Produto).Error; err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"error": "Produto não encontrado"})
+		return
+	}
+
+	// Adiciona o item ao carrinho
+	carrinho[item.IdProduto] += item.Quantidade
+
+	// Retorna a resposta com status de sucesso
+	c.JSON(200, gin.H{
+		"message":  "Item adicionado ao carrinho",
+		"carrinho": carrinho,
+	})
+}
