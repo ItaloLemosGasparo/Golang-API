@@ -48,7 +48,7 @@ func main() {
 
 	//Prudotos
 	r.POST("/produto", controladores.CadastrarProduto)
-	r.POST("/produto/:idU/:idP", controladores.CadastrarFavorito) //idUsuario /: idProduto
-
+	r.POST("/produto/:idU/:idP", controladores.AdicionarProdutoFavorito)      //idUsuario /: idProduto
+	r.POST("/produto/:idU/:idP/:qtd", controladores.AdicionarProdutoCarrinho) //idUsuario /: idProduto /: Quantidade
 	r.Run()
 }

@@ -35,7 +35,7 @@ func CadastrarProduto(c *gin.Context) {
 	})
 }
 
-func CadastrarFavorito(c *gin.Context) {
+func AdicionarProdutoFavorito(c *gin.Context) {
 	idU := c.Param("idU")
 	idP := c.Param("idP")
 
@@ -44,11 +44,13 @@ func CadastrarFavorito(c *gin.Context) {
 
 	var favorito modelos.Favoritos
 
-	if inicializadores.BD.First(&favorito.Id_Produto, idP) == nil {
+	var produto modelos.Produto
+
+	if inicializadores.BD.First(&produto, idP) != nil {
 		idUs, err := strconv.Atoi(idU)
 		idPr, err2 := strconv.Atoi(idP)
 
-		if err != nil && err2 != nil {
+		if err == nil && err2 == nil {
 			favorito = modelos.Favoritos{
 				Id_Usuario: idUs,
 				Id_Produto: idPr,
@@ -67,28 +69,52 @@ func CadastrarFavorito(c *gin.Context) {
 	}
 }
 
-func AddCarrinho(c *gin.Context) {
-	//map para armazenar os itens do carrinho.
-	var carrinho = make(map[int]int)
-	var item Item
-	if err := c.BindJSON(&item); err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"error": "Bad request"})
+func AdicionarProdutoCarrinho(c *gin.Context) {
+	//Criar o carrinho e colocar o id_usuario como o id certo
+	//Criar um Items_Carrinho definir o id_carrinho
+	//Adicionar o produto ao Items_Carrinho
+
+	idU := c.Param("idU")
+	idP := c.Param("idP")
+	qtd := c.Param("qtd")
+
+	idUs, err := strconv.Atoi(idU)
+	idPr, err2 := strconv.Atoi(idP)
+	qtdP, err3 := strconv.ParseFloat(qtd, 64)
+
+	if err == nil && err2 == nil && err3 == nil {
+		carrinho := modelos.Carrinho{
+			Id_Usuario: idUs,
+		}
+
+		if inicializadores.BD.First(&carrinho.Id_Usuario, idP) != nil {
+			if result := inicializadores.BD.Create(&carrinho); result.Error != nil {
+				c.Status(400)
+				return
+			}
+			item_Carrinho := modelos.Items_Carrinho{
+				Id_Carrinho: carrinho.Id,
+				ID_Produto:  idPr,
+				Quantidade:  qtdP,
+			}
+			if result := inicializadores.BD.Create(&item_Carrinho); result.Error != nil {
+				c.Status(400)
+				return
+			}
+		} else {
+			item_Carrinho := modelos.Items_Carrinho{
+				Id_Carrinho: carrinho.Id,
+				ID_Produto:  idPr,
+				Quantidade:  qtdP,
+			}
+			if result := inicializadores.BD.Create(&item_Carrinho); result.Error != nil {
+				c.Status(400)
+				return
+			}
+		}
+
+	} else {
+		c.Status(400)
 		return
 	}
-
-	// Verifica se o produto já está add no BD
-	var produto modelos.Produto
-	if err := inicializadores.BD.First(&produto, item.Id_Produto).Error; err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"error": "Produto não encontrado"})
-		return
-	}
-
-	// Adiciona o item ao carrinho
-	carrinho[item.IdProduto] += item.Quantidade
-
-	// Retorna a resposta com status de sucesso
-	c.JSON(200, gin.H{
-		"message":  "Item adicionado ao carrinho",
-		"carrinho": carrinho,
-	})
 }

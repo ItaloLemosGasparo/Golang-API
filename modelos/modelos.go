@@ -54,7 +54,7 @@ type Items_Carrinho struct {
 	Id          int     `json:"id" gorm:"primaryKey"`
 	Id_Carrinho int     `json:"id_carrinho" gorm:"not null"`
 	ID_Produto  int     `json:"id_produto" gorm:"not null"`
-	Quantidade  float32 `json:"quantidade" gorm:"not null"`
+	Quantidade  float64 `json:"quantidade" gorm:"not null"`
 }
 
 type Pedido struct {
