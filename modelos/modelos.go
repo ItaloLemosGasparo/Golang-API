@@ -11,6 +11,12 @@ type Usuario struct {
 	CPF        string `json:"cpf" gorm:"uniqueIndex;type:varchar(14)"`
 	Privilegio string `json:"privilegio"`
 }
+
+type Senhas struct {
+	Id_Usuario int    `json:"id_usuario" gorm:"primaryKey;not null;foreignKey:id"`
+	SenhaA     string `json:"SenhaA" gorm:"not null;type:varchar(256)"`
+}
+
 type Endereco struct {
 	Id_Usuario int    `json:"id_usuario" gorm:"primaryKey;not null;foreignKey:id"`
 	Logradouro string `json:"logradouro" gorm:"not null;type:varchar(100)"`
@@ -19,11 +25,6 @@ type Endereco struct {
 	Cidade     string `json:"cidade" gorm:"not null;type:varchar(50)"`
 	Uf         string `json:"uf" gorm:"not null;type:varchar(2)"`
 	Cep        string `json:"cep" gorm:"not null;type:varchar(9)"`
-}
-
-type Senhas struct {
-	Id_Usuario int    `json:"id_usuario" gorm:"primaryKey;not null;foreignKey:id"`
-	SenhaA     string `json:"SenhaA" gorm:"not null;type:varchar(256)"`
 }
 
 type Fornecedor struct {
@@ -38,7 +39,7 @@ type Fornecedor struct {
 
 type Produto struct {
 	gorm.Model
-	Id_Fornecedor uint    `json:"id_Fornecedor" gorm:"not null;index;foreignKey:id"`
+	Id_Fornecedor int    `json:"id_Fornecedor" gorm:"not null;index;foreignKey:id"`
 	Nome          string  `json:"nome" gorm:"not null;type:varchar(50)"`
 	Descricao     string  `json:"descricao" gorm:"not null;type:varchar(2048)"`
 	Preco         float64 `json:"preco" gorm:"not null"`

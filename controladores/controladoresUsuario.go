@@ -119,38 +119,47 @@ func AtualizarUsuario(c *gin.Context) {
 func AtualizarSenhaUsuario(c *gin.Context) {
 	id := c.Param("id")
 
+	//Verifica se o usuario existe
+	if result := inicializadores.BD.First("usuarios", id); result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	//Verifica se o usuario tem uma senha cadastrada
+	var senha modelos.Senhas
+	if result := inicializadores.BD.Where("Id_Usuario = ?", id).First(&senha); result.Error != nil {
+		c.Status(400)
+		return
+	}
+
 	var senhaTemp struct {
 		Senha string
 	}
 
 	c.Bind(&senhaTemp)
 
-	senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(senhaTemp.Senha), bcrypt.DefaultCost)
-	if err != nil {
+	//Verifica se a nova senha é igual a atual
+	if bcrypt.CompareHashAndPassword([]byte(senha.SenhaA), []byte(senhaTemp.Senha)) != nil {
+		senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(senhaTemp.Senha), bcrypt.DefaultCost)
+		if err != nil {
+			c.Status(400)
+			return
+		}
+
+		senha.SenhaA = string(senhaCriptografada)
+		if result := inicializadores.BD.Save(&senha); result.Error != nil {
+			c.Status(400)
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"senhaA": senha.SenhaA,
+		})
+	} else {
 		c.Status(400)
 		return
 	}
 
-	var usuario modelos.Usuario
-	if result := inicializadores.BD.First(&usuario, id); result.Error != nil {
-		c.Status(400)
-		return
-	}
-
-	var senha modelos.Senhas
-	if result := inicializadores.BD.Where("usuario_id = ?", id).First(&senha); result.Error != nil {
-		c.Status(400)
-		return
-	}
-	senha.SenhaA = string(senhaCriptografada)
-	if result := inicializadores.BD.Save(&senha); result.Error != nil {
-		c.Status(400)
-		return
-	}
-
-	c.JSON(200, gin.H{
-		"Nova_senha": senha.SenhaA,
-	})
 }
 
 func CadastrarEndereco(c *gin.Context) {
@@ -186,4 +195,32 @@ func CadastrarEndereco(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"endereco": endereco,
 	})
+}
+
+func AtualizarTelefone(c *gin.Context) {
+	id := c.Param("id")
+
+	var telefoneTemp struct {
+		Telefone  string
+		TelefoneB string
+	}
+
+	c.Bind(&telefoneTemp)
+
+	if telefoneTemp.Telefone != telefoneTemp.TelefoneB {
+		var usuario modelos.Usuario
+		inicializadores.BD.First(&usuario, id)
+
+		inicializadores.BD.Model(&usuario).Updates(modelos.Usuario{
+			Telefone:  telefoneTemp.Telefone,
+			TelefoneB: telefoneTemp.TelefoneB,
+		})
+
+		c.JSON(200, gin.H{
+			"usuario": usuario,
+		})
+	} else {
+		c.Status(400)
+		return
+	}
 }
