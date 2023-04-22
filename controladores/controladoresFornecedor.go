@@ -77,25 +77,30 @@ func AtualizarFornecedor(c *gin.Context) {
 		Email     string
 		Telefone  string
 		TelefoneB string
-		Cpf       string
-		Cnpj      string
+		CPF       string
+		CNPJ      string
 	}
+
 	c.Bind(&fornecedorTemp)
 
 	var fornecedor modelos.Fornecedor
-	inicializadores.BD.First(&fornecedor, id)
 
-	inicializadores.BD.Model(&fornecedor).Updates(modelos.Fornecedor{
+	if err := inicializadores.BD.First(&fornecedor, id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := inicializadores.BD.Model(&fornecedor).Updates(modelos.Fornecedor{
 		Nome:      fornecedorTemp.Nome,
 		Email:     fornecedorTemp.Email,
 		Telefone:  fornecedorTemp.Telefone,
 		TelefoneB: fornecedorTemp.TelefoneB,
-		CPF:       fornecedorTemp.Cpf,
-		CNPJ:      fornecedorTemp.Cnpj,
-	})
+		CPF:       fornecedorTemp.CPF,
+		CNPJ:      fornecedorTemp.CNPJ,
+	}).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 
-	c.JSON(200, gin.H{
-		"fornecedor": fornecedor,
-	})
-
+	c.JSON(200, gin.H{"fornecedor": fornecedor})
 }

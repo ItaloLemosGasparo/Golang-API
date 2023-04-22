@@ -175,7 +175,7 @@ func AtualizarSenhaUsuario(c *gin.Context) {
 
 }
 
-func CadastrarEndereco(c *gin.Context) {
+func AtualizarEndereco(c *gin.Context) {
 	var enderecoTemp struct {
 		Id_usuario int
 		Logradouro string
@@ -236,4 +236,42 @@ func AtualizarTelefone(c *gin.Context) {
 		c.Status(400)
 		return
 	}
+}
+
+func BuscarCarrinho(c *gin.Context) {
+	id := c.Param("id")
+
+	var Carrinho modelos.Carrinho
+
+	if err := inicializadores.BD.First(&Carrinho, id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"carrinho": Carrinho})
+}
+
+func BuscarFavorito(c *gin.Context) {
+	idU := c.Param("id")
+	idP := c.Param("id")
+
+	var Favorito modelos.Favoritos
+
+	if err := inicializadores.BD.First(&Favorito.Id_Usuario, idU, &Favorito.Id_Produto, idP).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"favorito": Favorito})
+}
+
+func BuscarFavoritos(c *gin.Context) {
+	var Favoritos []modelos.Favoritos
+
+	if err := inicializadores.BD.Find(&Favoritos).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"favoritos": Favoritos})
 }

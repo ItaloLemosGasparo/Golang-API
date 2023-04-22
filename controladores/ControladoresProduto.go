@@ -46,6 +46,38 @@ func DeletarProduto(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "Produto excluído com sucesso"})
 }
 
+func AtualizarProduto(c *gin.Context) {
+	id := c.Param("id")
+
+	var produtoTemp struct {
+		Id_Fornecedor int
+		Nome          string
+		Descricao     string
+		Preco         float64
+	}
+
+	c.Bind(&produtoTemp)
+
+	var produto modelos.Fornecedor
+
+	if err := inicializadores.BD.First(&produto, id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := inicializadores.BD.Model(&produto).Updates(modelos.Produto{
+		Id_Fornecedor: produtoTemp.Id_Fornecedor,
+		Nome:          produtoTemp.Nome,
+		Descricao:     produtoTemp.Descricao,
+		Preco:         produtoTemp.Preco,
+	}).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"produto": produto})
+}
+
 func BuscarProduto(c *gin.Context) {
 	id := c.Param("id")
 
