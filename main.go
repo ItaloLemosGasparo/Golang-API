@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"projeto/controladores"
 	"projeto/inicializadores"
-	"projeto/modelos"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,16 +12,6 @@ func init() {
 	fmt.Println("Funcionando")
 	inicializadores.CarregarVariaveisDeAmbiente()
 	inicializadores.ConectarAoBD()
-
-	inicializadores.BD.AutoMigrate(&modelos.Usuario{})
-	inicializadores.BD.AutoMigrate(&modelos.Senhas{})
-	inicializadores.BD.AutoMigrate(&modelos.Endereco{})
-	inicializadores.BD.AutoMigrate(&modelos.Fornecedor{})
-	inicializadores.BD.AutoMigrate(&modelos.Produto{})
-	inicializadores.BD.AutoMigrate(&modelos.Carrinho{})
-	inicializadores.BD.AutoMigrate(&modelos.Items_Carrinho{})
-	inicializadores.BD.AutoMigrate(&modelos.Pedido{})
-	inicializadores.BD.AutoMigrate(&modelos.Favoritos{})
 }
 
 func main() {
