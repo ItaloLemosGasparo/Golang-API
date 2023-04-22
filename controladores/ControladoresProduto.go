@@ -35,6 +35,37 @@ func CadastrarProduto(c *gin.Context) {
 	})
 }
 
+func DeletarProduto(c *gin.Context) {
+	id := c.Param("id")
+
+	if err := inicializadores.BD.Delete(&modelos.Produto{}, id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "Produto excluído com sucesso"})
+}
+
+func BuscarProduto(c *gin.Context) {
+	id := c.Param("id")
+
+	var produto modelos.Produto
+	inicializadores.BD.First(&produto, id)
+
+	c.JSON(200, gin.H{
+		"produto": produto,
+	})
+}
+
+func BuscarProdutos(c *gin.Context) {
+	var produtos []modelos.Produto
+	inicializadores.BD.Find(&produtos)
+
+	c.JSON(200, gin.H{
+		"produtos": produtos,
+	})
+}
+
 func AdicionarProdutoFavorito(c *gin.Context) {
 	idU := c.Param("idU")
 	idP := c.Param("idP")
@@ -70,10 +101,6 @@ func AdicionarProdutoFavorito(c *gin.Context) {
 }
 
 func AdicionarProdutoCarrinho(c *gin.Context) {
-	//Criar o carrinho e colocar o id_usuario como o id certo
-	//Criar um Items_Carrinho definir o id_carrinho
-	//Adicionar o produto ao Items_Carrinho
-
 	idU := c.Param("idU")
 	idP := c.Param("idP")
 	qtd := c.Param("qtd")

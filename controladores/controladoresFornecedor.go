@@ -41,9 +41,12 @@ func CadastrarFornecedor(c *gin.Context) {
 func DeletarFornecedor(c *gin.Context) {
 	id := c.Param("id")
 
-	inicializadores.BD.Delete(&modelos.Fornecedor{}, id)
+	if err := inicializadores.BD.Delete(&modelos.Fornecedor{}, id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 
-	c.Status(200)
+	c.JSON(200, gin.H{"message": "Fornecedor excluído com sucesso"})
 }
 
 func BuscarFornecedores(c *gin.Context) {

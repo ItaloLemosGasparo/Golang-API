@@ -60,29 +60,36 @@ func CadastrarUsuario(c *gin.Context) {
 func DeletarUsuario(c *gin.Context) {
 	id := c.Param("id")
 
-	inicializadores.BD.Delete(&modelos.Usuario{}, id)
+	if err := inicializadores.BD.Delete(&modelos.Usuario{}, id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 
-	c.Status(200)
+	c.JSON(200, gin.H{"message": "Usuario excluído com sucesso"})
 }
 
 func BuscarUsuarios(c *gin.Context) {
 	var usuarios []modelos.Usuario
-	inicializadores.BD.Find(&usuarios)
 
-	c.JSON(200, gin.H{
-		"usuarios": usuarios,
-	})
+	if err := inicializadores.BD.Find(&usuarios).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"usuarios": usuarios})
 }
 
 func BuscarUsuario(c *gin.Context) {
 	id := c.Param("id")
 
 	var usuario modelos.Usuario
-	inicializadores.BD.First(&usuario, id)
 
-	c.JSON(200, gin.H{
-		"usuario": usuario,
-	})
+	if err := inicializadores.BD.First(&usuario, id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"usuario": usuario})
 }
 
 func AtualizarUsuario(c *gin.Context) {
@@ -100,35 +107,41 @@ func AtualizarUsuario(c *gin.Context) {
 	c.Bind(&usuarioTemp)
 
 	var usuario modelos.Usuario
-	inicializadores.BD.First(&usuario, id)
 
-	inicializadores.BD.Model(&usuario).Updates(modelos.Usuario{
+	if err := inicializadores.BD.First(&usuario, id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := inicializadores.BD.Model(&usuario).Updates(modelos.Usuario{
 		Nome:       usuarioTemp.Nome,
 		Telefone:   usuarioTemp.Telefone,
 		TelefoneB:  usuarioTemp.TelefoneB,
 		Email:      usuarioTemp.Email,
 		CPF:        usuarioTemp.CPF,
 		Privilegio: usuarioTemp.Privilegio,
-	})
+	}).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 
-	c.JSON(200, gin.H{
-		"usuario": usuario,
-	})
+	c.JSON(200, gin.H{"usuario": usuario})
 }
 
 func AtualizarSenhaUsuario(c *gin.Context) {
 	id := c.Param("id")
 
 	//Verifica se o usuario existe
-	if result := inicializadores.BD.First("usuarios", id); result.Error != nil {
-		c.Status(400)
+	if err := inicializadores.BD.First("usuarios", id).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	//Verifica se o usuario tem uma senha cadastrada
 	var senha modelos.Senhas
-	if result := inicializadores.BD.Where("Id_Usuario = ?", id).First(&senha); result.Error != nil {
-		c.Status(400)
+
+	if err := inicializadores.BD.Where("Id_Usuario = ?", id).First(&senha).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 

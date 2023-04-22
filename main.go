@@ -32,12 +32,20 @@ func main() {
 
 	//Fornecedores
 	r.POST("/fornecedor", controladores.CadastrarFornecedor)
-	r.GET("/fornecedor", controladores.BuscarFornecedores)
 	r.GET("/fornecedor/:id", controladores.BuscarFornecedor)
+	r.GET("/fornecedor", controladores.BuscarFornecedores)
+	//Editar
 
 	//Prudotos
 	r.POST("/produto", controladores.CadastrarProduto)
 	r.POST("/produto/:idU/:idP", controladores.AdicionarProdutoFavorito)      //idUsuario /: idProduto
 	r.POST("/produto/:idU/:idP/:qtd", controladores.AdicionarProdutoCarrinho) //idUsuario /: idProduto /: Quantidade
+	r.GET("/produto/:id", controladores.BuscarProduto)
+	r.GET("/produto", controladores.BuscarProdutos)
+	//Editar
+	//Buscar Carrinho
+	//Buscar Favoritos
+	//Buscar x nos favoritos
+
 	r.Run()
 }
