@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"projeto/controladores"
 	"projeto/inicializadores"
+	"projeto/modelos"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +13,16 @@ func init() {
 	fmt.Println("Funcionando")
 	inicializadores.CarregarVariaveisDeAmbiente()
 	inicializadores.ConectarAoBD()
+
+	inicializadores.BD.AutoMigrate(&modelos.Usuario{})
+	inicializadores.BD.AutoMigrate(&modelos.Senhas{})
+	inicializadores.BD.AutoMigrate(&modelos.Endereco{})
+	inicializadores.BD.AutoMigrate(&modelos.Fornecedor{})
+	inicializadores.BD.AutoMigrate(&modelos.Produto{})
+	inicializadores.BD.AutoMigrate(&modelos.Carrinho{})
+	inicializadores.BD.AutoMigrate(&modelos.Items_Carrinho{})
+	inicializadores.BD.AutoMigrate(&modelos.Pedido{})
+	inicializadores.BD.AutoMigrate(&modelos.Favoritos{})
 }
 
 func main() {
@@ -28,9 +39,9 @@ func main() {
 	r.PUT("/cadastrarTelefone/:id", controladores.AtualizarTelefone)
 	r.PUT("/cadastrarEndereco", controladores.AtualizarEndereco)
 
-	r.GET("/produto/:id", controladores.BuscarCarrinho)       //id do usuario
-	r.GET("/produto/:idU/:idP", controladores.BuscarFavorito) //id do usuario / id do produto
-	r.GET("/produto/:id", controladores.BuscarFavoritos)      //id do usuario
+	r.GET("/carrinho/:id", controladores.BuscarCarrinho)        //id do usuario
+	r.GET("/favoritos/:idU/:idP", controladores.BuscarFavorito) //id do usuario / id do produto
+	r.GET("/favoritos_/:id", controladores.BuscarFavoritos)     //id do usuario
 
 	//Login
 	r.POST("/usuario/login", controladores.Login)
