@@ -9,12 +9,12 @@ import (
 
 func CadastrarFornecedor(c *gin.Context) {
 	var fornecedorTemp struct {
-		Nome      string
-		Email     string
-		Telefone  string
-		TelefoneB string
-		Cpf       string
-		Cnpj      string
+		Nome      string `json:"nome"`
+		Email     string `json:"email"`
+		Telefone  string `json:"telefone"`
+		TelefoneB string `json:"telefoneb"`
+		Cpf       string `json:"cpf"`
+		Cnpj      string `json:"cnpj"`
 	}
 	c.Bind(&fornecedorTemp)
 
@@ -72,12 +72,12 @@ func AtualizarFornecedor(c *gin.Context) {
 	id := c.Param("id")
 
 	var fornecedorTemp struct {
-		Nome      string
-		Email     string
-		Telefone  string
-		TelefoneB string
-		CPF       string
-		CNPJ      string
+		Nome      string `json:"nome"`
+		Email     string `json:"email"`
+		Telefone  string `json:"telefone"`
+		TelefoneB string `json:"telefoneb"`
+		CPF       string `json:"cpf"`
+		CNPJ      string `json:"cnpj"`
 	}
 
 	c.Bind(&fornecedorTemp)

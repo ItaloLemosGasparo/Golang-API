@@ -10,13 +10,13 @@ import (
 
 func CadastrarUsuario(c *gin.Context) {
 	var usuarioTemp struct {
-		Nome       string
-		Telefone   string
-		TelefoneB  string
-		Email      string
-		CPF        string
-		Privilegio string
-		Senha      string
+		Nome       string `json:"nome"`
+		Telefone   string `json:"telefone"`
+		TelefoneB  string `json:"telefoneb"`
+		Email      string `json:"email"`
+		CPF        string `json:"cpf"`
+		Privilegio string `json:"privilegio"`
+		Senha      string `json:"senha"`
 	}
 
 	c.Bind(&usuarioTemp)
@@ -96,12 +96,12 @@ func AtualizarUsuario(c *gin.Context) {
 	id := c.Param("id")
 
 	var usuarioTemp struct {
-		Nome       string
-		Telefone   string
-		TelefoneB  string
-		Email      string
-		CPF        string
-		Privilegio string
+		Nome       string `json:"nome"`
+		Telefone   string `json:"telefone"`
+		TelefoneB  string `json:"telefoneb"`
+		Email      string `json:"email"`
+		CPF        string `json:"cpf"`
+		Privilegio string `json:"privilegio"`
 	}
 
 	c.Bind(&usuarioTemp)
@@ -177,13 +177,13 @@ func AtualizarSenhaUsuario(c *gin.Context) {
 
 func AtualizarEndereco(c *gin.Context) {
 	var enderecoTemp struct {
-		Id_usuario int
-		Logradouro string
-		Numero     int
-		Bairro     string
-		Cidade     string
-		Uf         string
-		Cep        string
+		Id_usuario int    `json:"id_usuario"`
+		Logradouro string `json:"logradouro"`
+		Numero     int    `json:"numero"`
+		Bairro     string `json:"bairro"`
+		Cidade     string `json:"cidade"`
+		Uf         string `json:"uf"`
+		Cep        string `json:"cep"`
 	}
 
 	c.Bind(&enderecoTemp)
@@ -214,8 +214,8 @@ func AtualizarTelefone(c *gin.Context) {
 	id := c.Param("id")
 
 	var telefoneTemp struct {
-		Telefone  string
-		TelefoneB string
+		Telefone  string `json:"telefone"`
+		TelefoneB string `json:"telefoneb"`
 	}
 
 	c.Bind(&telefoneTemp)

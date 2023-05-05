@@ -10,10 +10,10 @@ import (
 
 func CadastrarProduto(c *gin.Context) {
 	var ProdutoTemp struct {
-		Id_Fornecedor int
-		Nome          string
-		Descricao     string
-		Preco         float64
+		Id_Fornecedor int     `json:"id_fornecedor"`
+		Nome          string  `json:"nome"`
+		Descricao     string  `json:"descricao"`
+		Preco         float64 `json:"preco"`
 	}
 
 	c.Bind(&ProdutoTemp)
@@ -50,10 +50,10 @@ func AtualizarProduto(c *gin.Context) {
 	id := c.Param("id")
 
 	var produtoTemp struct {
-		Id_Fornecedor int
-		Nome          string
-		Descricao     string
-		Preco         float64
+		Id_Fornecedor int     `json:"id_fornecedor"`
+		Nome          string  `json:"nome"`
+		Descricao     string  `json:"descricao"`
+		Preco         float64 `json:"preco"`
 	}
 
 	c.Bind(&produtoTemp)
@@ -144,7 +144,7 @@ func AdicionarProdutoCarrinho(c *gin.Context) {
 		c.Status(400)
 		return
 	}
-	
+
 	carrinho := modelos.Carrinho{
 		Id_Usuario: idUs,
 	}
