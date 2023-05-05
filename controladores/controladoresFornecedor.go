@@ -16,7 +16,6 @@ func CadastrarFornecedor(c *gin.Context) {
 		Cpf       string
 		Cnpj      string
 	}
-
 	c.Bind(&fornecedorTemp)
 
 	fornecedor := modelos.Fornecedor{
