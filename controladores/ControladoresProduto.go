@@ -113,16 +113,15 @@ func AdicionarProdutoFavorito(c *gin.Context) {
 		idUs, err := strconv.Atoi(idU)
 		idPr, err2 := strconv.Atoi(idP)
 
-		if err == nil && err2 == nil {
-			favorito = modelos.Favoritos{
-				Id_Usuario: idUs,
-				Id_Produto: idPr,
-			}
-			if result := inicializadores.BD.Create(&favorito); result.Error != nil {
-				c.Status(400)
-				return
-			}
-		} else {
+		if err != nil || err2 != nil {
+			c.Status(400)
+			return
+		}
+		favorito = modelos.Favoritos{
+			Id_Usuario: idUs,
+			Id_Produto: idPr,
+		}
+		if result := inicializadores.BD.Create(&favorito); result.Error != nil {
 			c.Status(400)
 			return
 		}
@@ -141,39 +140,38 @@ func AdicionarProdutoCarrinho(c *gin.Context) {
 	idPr, err2 := strconv.Atoi(idP)
 	qtdP, err3 := strconv.ParseFloat(qtd, 64)
 
-	if err == nil && err2 == nil && err3 == nil {
-		carrinho := modelos.Carrinho{
-			Id_Usuario: idUs,
-		}
-
-		if inicializadores.BD.First(&carrinho.Id_Usuario, idP) != nil {
-			if result := inicializadores.BD.Create(&carrinho); result.Error != nil {
-				c.Status(400)
-				return
-			}
-			item_Carrinho := modelos.Items_Carrinho{
-				Id_Carrinho: carrinho.Id,
-				ID_Produto:  idPr,
-				Quantidade:  qtdP,
-			}
-			if result := inicializadores.BD.Create(&item_Carrinho); result.Error != nil {
-				c.Status(400)
-				return
-			}
-		} else {
-			item_Carrinho := modelos.Items_Carrinho{
-				Id_Carrinho: carrinho.Id,
-				ID_Produto:  idPr,
-				Quantidade:  qtdP,
-			}
-			if result := inicializadores.BD.Create(&item_Carrinho); result.Error != nil {
-				c.Status(400)
-				return
-			}
-		}
-
-	} else {
+	if err != nil || err2 != nil || err3 != nil {
 		c.Status(400)
 		return
+	}
+	
+	carrinho := modelos.Carrinho{
+		Id_Usuario: idUs,
+	}
+
+	if inicializadores.BD.First(&carrinho.Id_Usuario, idP) != nil {
+		if result := inicializadores.BD.Create(&carrinho); result.Error != nil {
+			c.Status(400)
+			return
+		}
+		item_Carrinho := modelos.Items_Carrinho{
+			Id_Carrinho: carrinho.Id,
+			ID_Produto:  idPr,
+			Quantidade:  qtdP,
+		}
+		if result := inicializadores.BD.Create(&item_Carrinho); result.Error != nil {
+			c.Status(400)
+			return
+		}
+	} else {
+		item_Carrinho := modelos.Items_Carrinho{
+			Id_Carrinho: carrinho.Id,
+			ID_Produto:  idPr,
+			Quantidade:  qtdP,
+		}
+		if result := inicializadores.BD.Create(&item_Carrinho); result.Error != nil {
+			c.Status(400)
+			return
+		}
 	}
 }

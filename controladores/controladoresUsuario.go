@@ -252,8 +252,8 @@ func BuscarCarrinho(c *gin.Context) {
 }
 
 func BuscarFavorito(c *gin.Context) {
-	idU := c.Param("id")
-	idP := c.Param("id")
+	idU := c.Param("idU")
+	idP := c.Param("idP")
 
 	var Favorito modelos.Favoritos
 
