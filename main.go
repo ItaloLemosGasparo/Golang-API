@@ -29,37 +29,42 @@ func main() {
 	r := gin.Default()
 
 	//Usuarios
-	r.POST("/usuario", controladores.CadastrarUsuario)
-	r.PUT("/usuario/:id", controladores.AtualizarUsuario)
-	r.DELETE("/usuario/:id", controladores.DeletarUsuario)
+	r.POST("/usuario", controladores.CadastrarUsuario)                //Cadastrar Usuario
+	r.PUT("/usuario/:id", controladores.AtualizarUsuario)             //Atualizar Usuario
+	r.PUT("/atualizarsenha/:id", controladores.AtualizarSenhaUsuario) //Atualizar senha do Usuario
+	r.DELETE("/usuario/:id", controladores.DeletarUsuario)            //Deletar Usuario
+	//Buscar
 	r.GET("/usuario/:id", controladores.BuscarUsuario)
 	r.GET("/usuario", controladores.BuscarUsuarios)
-
-	r.PUT("/atualizarsenha/:id", controladores.AtualizarSenhaUsuario)
+	//Cadastrar Extras
 	r.PUT("/cadastrarTelefone/:id", controladores.AtualizarTelefone)
 	r.PUT("/cadastrarEndereco", controladores.AtualizarEndereco)
 
-	r.GET("/carrinho/:id", controladores.BuscarCarrinho)        //id do usuario
-	r.GET("/favoritos/:idU/:idP", controladores.BuscarFavorito) //id do usuario / id do produto
-	r.GET("/favoritos_/:id", controladores.BuscarFavoritos)     //id do usuario
-
-	//Login
-	r.POST("/usuario/login", controladores.Login)
+	//Carrinho & Favoritos
+	r.POST("/adicionarProdutoFavoritos", controladores.AdicionarProdutoFavorito) //recebo id usuario, id produto por JSON
+	r.POST("/adicionarProdutoCarrinho", controladores.AdicionarProdutoCarrinho)  //recebo id usuario, id produto e quantidade por JSON
+	//Buscar
+	//r.GET("/BuscarProdutocarrinho", controladores.BuscarCarrinho)    //Buscar produto x no carrinho
+	r.GET("/BuscarProdutoscarrinho/:id", controladores.BuscarCarrinho) //id do usuario
+	r.GET("/buscarFavorito", controladores.BuscarFavorito)             //recebo id usuario, id produto por JSON
+	r.GET("buscarFavoritos/:id", controladores.BuscarFavoritos)        //id do usuario
 
 	//Fornecedores
-	r.POST("/fornecedor", controladores.CadastrarFornecedor)
-	r.PUT("/fornecedor/:id", controladores.AtualizarFornecedor)
+	r.POST("/fornecedor", controladores.CadastrarFornecedor)    //Cadastrar Fornecedor
+	r.PUT("/fornecedor/:id", controladores.AtualizarFornecedor) //Atualizar Fornecedor
+	//Buscar
 	r.GET("/fornecedor/:id", controladores.BuscarFornecedor)
 	r.GET("/fornecedor", controladores.BuscarFornecedores)
 
 	//Prudotos
-	r.POST("/produto", controladores.CadastrarProduto)
-	r.POST("/produto/:idU/:idP", controladores.AdicionarProdutoFavorito)      //idUsuario /: idProduto
-	r.POST("/produto/:idU/:idP/:qtd", controladores.AdicionarProdutoCarrinho) //idUsuario /: idProduto /: Quantidade
+	r.POST("/produto", controladores.CadastrarProduto)    //Cadastrar Produto
+	r.PUT("/produto/:id", controladores.AtualizarProduto) //Atualizar Produto
+	//Buscar
 	r.GET("/produto/:id", controladores.BuscarProduto)
 	r.GET("/produto", controladores.BuscarProdutos)
-	r.PUT("/produto/:id", controladores.AtualizarProduto)
-	//Buscar x nos favoritos
+
+	//Login
+	r.POST("/usuario/login", controladores.Login)
 
 	r.Run()
 }

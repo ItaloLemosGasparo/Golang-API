@@ -27,21 +27,19 @@ func CadastrarFornecedor(c *gin.Context) {
 		CNPJ:      fornecedorTemp.Cnpj,
 	}
 
-	if result := inicializadores.BD.Create(&fornecedor); result.Error != nil {
-		c.Status(400)
+	if err := inicializadores.BD.Create(&fornecedor).Error; err != nil {
+		c.JSON(400, gin.H{"Error ao cadastrar o fornecedor ": err.Error()})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"Fornecedor": fornecedor,
-	})
+	c.JSON(200, gin.H{"message": "Fornecedor cadastrado com sucesso"})
 }
 
 func DeletarFornecedor(c *gin.Context) {
 	id := c.Param("id")
 
 	if err := inicializadores.BD.Delete(&modelos.Fornecedor{}, id).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Error ao excluir o fornecedor ": err.Error()})
 		return
 	}
 
@@ -50,22 +48,26 @@ func DeletarFornecedor(c *gin.Context) {
 
 func BuscarFornecedores(c *gin.Context) {
 	var Fornecedores []modelos.Fornecedor
-	inicializadores.BD.Find(&Fornecedores)
 
-	c.JSON(200, gin.H{
-		"fornecedores": Fornecedores,
-	})
+	if err := inicializadores.BD.Find(&Fornecedores).Error; err != nil {
+		c.JSON(400, gin.H{"Error ao buscar os fornecedores ": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"fornecedores": Fornecedores})
 }
 
 func BuscarFornecedor(c *gin.Context) {
 	id := c.Param("id")
 
 	var fornecedor modelos.Fornecedor
-	inicializadores.BD.First(&fornecedor, id)
 
-	c.JSON(200, gin.H{
-		"fornecedor": fornecedor,
-	})
+	if err := inicializadores.BD.First(&fornecedor, id).Error; err != nil {
+		c.JSON(400, gin.H{"Error ao buscar o fornecedor ": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"fornecedor": fornecedor})
 }
 
 func AtualizarFornecedor(c *gin.Context) {
@@ -85,7 +87,7 @@ func AtualizarFornecedor(c *gin.Context) {
 	var fornecedor modelos.Fornecedor
 
 	if err := inicializadores.BD.First(&fornecedor, id).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao bucar o fornecedor": err.Error()})
 		return
 	}
 
@@ -97,9 +99,9 @@ func AtualizarFornecedor(c *gin.Context) {
 		CPF:       fornecedorTemp.CPF,
 		CNPJ:      fornecedorTemp.CNPJ,
 	}).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao atualizar o fornecedor": err.Error()})
 		return
 	}
 
-	c.JSON(200, gin.H{"fornecedor": fornecedor})
+	c.JSON(200, gin.H{"message": "Fornecedor atualizado com sucesso"})
 }

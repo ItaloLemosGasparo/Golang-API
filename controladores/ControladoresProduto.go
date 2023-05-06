@@ -1,11 +1,12 @@
 package controladores
 
 import (
+	"errors"
 	"projeto/inicializadores"
 	"projeto/modelos"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func CadastrarProduto(c *gin.Context) {
@@ -25,21 +26,19 @@ func CadastrarProduto(c *gin.Context) {
 		Preco:         ProdutoTemp.Preco,
 	}
 
-	if result := inicializadores.BD.Create(&Produto); result.Error != nil {
-		c.Status(400)
+	if err := inicializadores.BD.Create(&Produto).Error; err != nil {
+		c.JSON(400, gin.H{"Erro ao cadastrar o produto": err.Error()})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"produto": Produto,
-	})
+	c.JSON(200, gin.H{"message": "Produto cadastrado com sucesso"})
 }
 
 func DeletarProduto(c *gin.Context) {
 	id := c.Param("id")
 
 	if err := inicializadores.BD.Delete(&modelos.Produto{}, id).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao excluir o produto": err.Error()})
 		return
 	}
 
@@ -61,7 +60,7 @@ func AtualizarProduto(c *gin.Context) {
 	var produto modelos.Fornecedor
 
 	if err := inicializadores.BD.First(&produto, id).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao buscar o produto ": err.Error()})
 		return
 	}
 
@@ -71,7 +70,7 @@ func AtualizarProduto(c *gin.Context) {
 		Descricao:     produtoTemp.Descricao,
 		Preco:         produtoTemp.Preco,
 	}).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao atualizar o produto ": err.Error()})
 		return
 	}
 
@@ -82,96 +81,118 @@ func BuscarProduto(c *gin.Context) {
 	id := c.Param("id")
 
 	var produto modelos.Produto
-	inicializadores.BD.First(&produto, id)
 
-	c.JSON(200, gin.H{
-		"produto": produto,
-	})
+	if err := inicializadores.BD.First(&produto, id).Error; err != nil {
+		c.JSON(400, gin.H{"Erro ao buscar o produto ": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"produto": produto})
 }
 
 func BuscarProdutos(c *gin.Context) {
 	var produtos []modelos.Produto
-	inicializadores.BD.Find(&produtos)
 
-	c.JSON(200, gin.H{
-		"produtos": produtos,
-	})
+	if err := inicializadores.BD.Find(&produtos).Error; err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"produtos": produtos})
 }
 
 func AdicionarProdutoFavorito(c *gin.Context) {
-	idU := c.Param("idU")
-	idP := c.Param("idP")
+	var request struct {
+		Id_Usuario int `json:"id_usuario"`
+		Id_Produto int `json:"id_produto"`
+	}
+
+	err := c.BindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 
 	var usuario modelos.Usuario
-	inicializadores.BD.First(&usuario, idU)
-
 	var favorito modelos.Favoritos
-
 	var produto modelos.Produto
 
-	if inicializadores.BD.First(&produto, idP) != nil {
-		idUs, err := strconv.Atoi(idU)
-		idPr, err2 := strconv.Atoi(idP)
+	//Usuario existe?
+	if err := inicializadores.BD.First(&usuario, request.Id_Usuario).Error; err != nil {
+		c.JSON(400, gin.H{"Usuario não encontrado ": err.Error()})
+		return
+	}
 
-		if err != nil || err2 != nil {
-			c.Status(400)
-			return
-		}
+	//Produto existe?
+	if err := inicializadores.BD.First(&produto, request.Id_Produto).Error; err != nil {
+
 		favorito = modelos.Favoritos{
-			Id_Usuario: idUs,
-			Id_Produto: idPr,
+			Id_Usuario: request.Id_Usuario,
+			Id_Produto: request.Id_Produto,
 		}
-		if result := inicializadores.BD.Create(&favorito); result.Error != nil {
-			c.Status(400)
+
+		if err := inicializadores.BD.Create(&favorito).Error; err != nil {
+			c.JSON(400, gin.H{"Erro ao criar o favorito": err.Error()})
 			return
 		}
+
 	} else {
-		c.Status(400)
+		c.JSON(400, gin.H{"Erro ao buscar o produto ": err.Error()})
 		return
 	}
 }
 
 func AdicionarProdutoCarrinho(c *gin.Context) {
-	idU := c.Param("idU")
-	idP := c.Param("idP")
-	qtd := c.Param("qtd")
+	var request struct {
+		Id_Usuario int `json:"id_usuario"`
+		Id_Produto int `json:"id_produto"`
+		Quantidade int `json:"quantidade"`
+	}
 
-	idUs, err := strconv.Atoi(idU)
-	idPr, err2 := strconv.Atoi(idP)
-	qtdP, err3 := strconv.ParseFloat(qtd, 64)
-
-	if err != nil || err2 != nil || err3 != nil {
-		c.Status(400)
+	err := c.BindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	carrinho := modelos.Carrinho{
-		Id_Usuario: idUs,
+		Id_Usuario: request.Id_Usuario,
 	}
 
-	if inicializadores.BD.First(&carrinho.Id_Usuario, idP) != nil {
-		if result := inicializadores.BD.Create(&carrinho); result.Error != nil {
-			c.Status(400)
-			return
-		}
-		item_Carrinho := modelos.Items_Carrinho{
-			Id_Carrinho: carrinho.Id,
-			ID_Produto:  idPr,
-			Quantidade:  qtdP,
-		}
-		if result := inicializadores.BD.Create(&item_Carrinho); result.Error != nil {
-			c.Status(400)
+	if err := inicializadores.BD.First(&carrinho, "id_usuario = ?", request.Id_Usuario).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			//Criando carrinho
+			if err := inicializadores.BD.Create(&carrinho).Error; err != nil {
+				c.JSON(400, gin.H{"erro ao criar o carrinho ": err.Error()})
+				return
+			}
+
+			item_Carrinho := modelos.Items_Carrinho{
+				Id_Carrinho: carrinho.Id,
+				ID_Produto:  request.Id_Produto,
+				Quantidade:  request.Quantidade,
+			}
+
+			//Adicionando o produto ao mesmo
+			if err := inicializadores.BD.Create(&item_Carrinho).Error; err != nil {
+				c.JSON(400, gin.H{"Erro ao adicionar o produto ao carrinho ": err.Error()})
+				return
+			}
+		} else {
+			c.JSON(400, gin.H{"Erro ao buscar o carrinho do usuario ": err.Error()})
 			return
 		}
 	} else {
 		item_Carrinho := modelos.Items_Carrinho{
 			Id_Carrinho: carrinho.Id,
-			ID_Produto:  idPr,
-			Quantidade:  qtdP,
+			ID_Produto:  request.Id_Produto,
+			Quantidade:  request.Quantidade,
 		}
-		if result := inicializadores.BD.Create(&item_Carrinho); result.Error != nil {
-			c.Status(400)
+		//Adicionando o produto ao carrinho
+		if err := inicializadores.BD.Create(&item_Carrinho).Error; err != nil {
+			c.JSON(400, gin.H{"Erro ao adicionar o produto ao carrinho ": err.Error()})
 			return
 		}
 	}
+	c.JSON(200, gin.H{"message": "Produto adicionado ao carrinho com sucesso"})
 }

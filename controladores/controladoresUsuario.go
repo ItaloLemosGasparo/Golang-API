@@ -30,14 +30,14 @@ func CadastrarUsuario(c *gin.Context) {
 		Privilegio: usuarioTemp.Privilegio,
 	}
 
-	if result := inicializadores.BD.Create(&usuario); result.Error != nil {
-		c.Status(400)
+	if err := inicializadores.BD.Create(&usuario).Error; err != nil {
+		c.JSON(400, gin.H{"Erro ao cadastrar o usuario ": err.Error()})
 		return
 	}
 
 	senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(usuarioTemp.Senha), bcrypt.DefaultCost)
 	if err != nil {
-		c.Status(400)
+		c.JSON(400, gin.H{"error ": err.Error()})
 		return
 	}
 
@@ -46,15 +46,12 @@ func CadastrarUsuario(c *gin.Context) {
 		SenhaA:     string(senhaCriptografada),
 	}
 
-	if result := inicializadores.BD.Create(&senha); result.Error != nil {
-		c.Status(400)
+	if err := inicializadores.BD.Create(&senha).Error; err != nil {
+		c.JSON(400, gin.H{"Erro ao cadastrar a senha ": err.Error()})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"usuario":          usuario,
-		"senha_cadastrada": senha.SenhaA,
-	})
+	c.JSON(200, gin.H{"message": "Usuario cadastrado com sucesso"})
 }
 
 func DeletarUsuario(c *gin.Context) {
@@ -72,7 +69,7 @@ func BuscarUsuarios(c *gin.Context) {
 	var usuarios []modelos.Usuario
 
 	if err := inicializadores.BD.Find(&usuarios).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao buscar os usuarios ": err.Error()})
 		return
 	}
 
@@ -85,7 +82,7 @@ func BuscarUsuario(c *gin.Context) {
 	var usuario modelos.Usuario
 
 	if err := inicializadores.BD.First(&usuario, id).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao buscar o usuario ": err.Error()})
 		return
 	}
 
@@ -109,7 +106,7 @@ func AtualizarUsuario(c *gin.Context) {
 	var usuario modelos.Usuario
 
 	if err := inicializadores.BD.First(&usuario, id).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao buscar o usuario ": err.Error()})
 		return
 	}
 
@@ -121,11 +118,11 @@ func AtualizarUsuario(c *gin.Context) {
 		CPF:        usuarioTemp.CPF,
 		Privilegio: usuarioTemp.Privilegio,
 	}).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao atualizar o cadastro do usuario ": err.Error()})
 		return
 	}
 
-	c.JSON(200, gin.H{"usuario": usuario})
+	c.JSON(200, gin.H{"message": "Usuario atualizado com sucesso"})
 }
 
 func AtualizarSenhaUsuario(c *gin.Context) {
@@ -133,46 +130,40 @@ func AtualizarSenhaUsuario(c *gin.Context) {
 
 	//Verifica se o usuario existe
 	if err := inicializadores.BD.First("usuarios", id).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"Erro ao buscar o usuario ": err.Error()})
 		return
 	}
 
-	//Verifica se o usuario tem uma senha cadastrada
 	var senha modelos.Senhas
 
-	if err := inicializadores.BD.Where("Id_Usuario = ?", id).First(&senha).Error; err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+	//Verifica se o usuario tem uma senha cadastrada
+	if err := inicializadores.BD.First(&senha, "id_usuario = ?", id).Error; err != nil {
+		c.JSON(400, gin.H{"Erro ao buscar a senha do usuario ": err.Error()})
 		return
 	}
 
-	var senhaTemp struct {
-		Senha string
-	}
-
+	var senhaTemp string
 	c.Bind(&senhaTemp)
 
 	//Verifica se a nova senha é igual a atual
-	if bcrypt.CompareHashAndPassword([]byte(senha.SenhaA), []byte(senhaTemp.Senha)) != nil {
-		senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(senhaTemp.Senha), bcrypt.DefaultCost)
+	if err := bcrypt.CompareHashAndPassword([]byte(senha.SenhaA), []byte(senhaTemp)); err != nil {
+		senhaCriptografada, err := bcrypt.GenerateFromPassword([]byte(senhaTemp), bcrypt.DefaultCost)
 		if err != nil {
-			c.Status(400)
+			c.JSON(400, gin.H{"Error ": err.Error()})
 			return
 		}
 
 		senha.SenhaA = string(senhaCriptografada)
 		if result := inicializadores.BD.Save(&senha); result.Error != nil {
-			c.Status(400)
+			c.JSON(400, gin.H{"Error ": err.Error()})
 			return
 		}
 
-		c.JSON(200, gin.H{
-			"senhaA": senha.SenhaA,
-		})
+		c.JSON(200, gin.H{"message": "senha atualizada com sucesso"})
 	} else {
-		c.Status(400)
+		c.JSON(400, gin.H{"Error ": err.Error()})
 		return
 	}
-
 }
 
 func AtualizarEndereco(c *gin.Context) {
@@ -198,16 +189,12 @@ func AtualizarEndereco(c *gin.Context) {
 		Cep:        enderecoTemp.Cep,
 	}
 
-	result := inicializadores.BD.Create(&endereco)
-
-	if result.Error != nil {
-		c.Status(400)
+	if err := inicializadores.BD.Create(&endereco).Error; err != nil {
+		c.JSON(400, gin.H{"Erro ao atualizar o endereço do usuario ": err.Error()})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"endereco": endereco,
-	})
+	c.JSON(200, gin.H{"message": "endereço atualizada com sucesso"})
 }
 
 func AtualizarTelefone(c *gin.Context) {
@@ -224,16 +211,16 @@ func AtualizarTelefone(c *gin.Context) {
 		var usuario modelos.Usuario
 		inicializadores.BD.First(&usuario, id)
 
-		inicializadores.BD.Model(&usuario).Updates(modelos.Usuario{
+		if err := inicializadores.BD.Model(&usuario).Updates(modelos.Usuario{
 			Telefone:  telefoneTemp.Telefone,
 			TelefoneB: telefoneTemp.TelefoneB,
-		})
-
-		c.JSON(200, gin.H{
-			"usuario": usuario,
-		})
+		}).Error; err != nil {
+			c.JSON(400, gin.H{"Erro ao atualizar o telefone do usuario ": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"message": "telefone atualizada com sucesso"})
 	} else {
-		c.Status(400)
+		c.JSON(400, gin.H{"message": "telefoneA e TelefoneB não podem ser iguais"})
 		return
 	}
 }
@@ -252,12 +239,21 @@ func BuscarCarrinho(c *gin.Context) {
 }
 
 func BuscarFavorito(c *gin.Context) {
-	idU := c.Param("idU")
-	idP := c.Param("idP")
+	var request struct {
+		Id_Usuario int `json:"id_usuario"`
+		Id_Produto int `json:"id_produto"`
+	}
+
+	err := c.BindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 
 	var Favorito modelos.Favoritos
 
-	if err := inicializadores.BD.First(&Favorito.Id_Usuario, idU, &Favorito.Id_Produto, idP).Error; err != nil {
+	//Buscando o produto x nos favoritos
+	if err := inicializadores.BD.First(&Favorito, "id_usuario = ?", request.Id_Usuario, &Favorito, "id_produto = ?", request.Id_Produto).Error; err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
