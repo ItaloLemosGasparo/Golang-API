@@ -1,14 +1,30 @@
-# <center>**Proj_Lab_Eng_Software**
+# Descrição do Projeto: API em Golang
 
-## <center>**Este projeto trata-se de uma API Rest desenvolvida utilizando Golang**
+Este projeto é uma API RESTful desenvolvida em Go (Golang), projetada para gerenciar usuários, produtos, fornecedores e carrinhos de compras. A API utiliza várias bibliotecas e frameworks populares para facilitar o desenvolvimento e a manutenção.
 
-* godotenv
-  * ```go get github.com/joho/godotenv```
-* gin-gonic
-  * ```go get -u github.com/gin-gonic/gin```
-* gorm
-  * ```go get -u gorm.io/gorm```
-  * ```go get -u gorm.io/driver/postgres```
-* jwt-go
-  * ```go get github.com/dgrijalva/jwt-go```
-* E outras...
+## Tecnologias Utilizadas:
+
+- **Godotenv:** Para gerenciamento de variáveis de ambiente.
+- **Gin-Gonic:** Framework web para construção de APIs de alta performance.
+- **GORM:** ORM (Object-Relational Mapping) para facilitar a interação com o banco de dados.
+- **JWT-Go:** Para implementação de autenticação baseada em tokens JWT.
+- **PostgreSQL:** Banco de dados utilizado para armazenamento de dados.
+
+## Principais Funcionalidades:
+
+- **Gerenciamento de Usuários:** 
+  - Cadastro, atualização e exclusão de usuários.
+  - Atualização de senhas e informações adicionais (como telefone e endereço).
+  - Autenticação de usuários via login.
+
+- **Gerenciamento de Produtos:**
+  - Cadastro, atualização e consulta de produtos.
+  
+- **Gerenciamento de Fornecedores:**
+  - Cadastro, atualização e consulta de fornecedores.
+
+- **Gerenciamento de Carrinho e Favoritos:**
+  - Adição de produtos aos favoritos e ao carrinho de compras.
+  - Consulta de produtos no carrinho e favoritos.
+
+## Estrutura do Código:
